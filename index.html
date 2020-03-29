@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="content-type" content="text/html; charset=utf-8">
+<title>Miles Away - kubs</title>
+<link rel="stylesheet" href="style.css" />
+
+<script type="text/javascript">
+
+var songInfo = {
+    fileLocation: "fl/masters/280320.wav",
+    fileType: "audio/wav",
+
+    coverLocation: "covers/miles-away.jpg",
+
+    title: "Miles Away",
+    album: "f**k i think i made another rap track",
+    artist:"kubs"
+}
+
+var d = document
+
+var setContent = function(query, text) {
+    d.querySelector(query).innerHTML = text
+}
+
+d.addEventListener('DOMContentLoaded', function() {
+    setContent("#title", songInfo.title)
+    setContent("#album", songInfo.album)
+    setContent("#artist", songInfo.artist)
+    
+    var source = d.querySelector("#source")
+    source.src = songInfo.fileLocation
+    source.type = songInfo.fileType
+
+    var cover = d.querySelector("#cover")
+    cover.src = songInfo.coverLocation
+
+    var audio = d.querySelector("audio")
+    var record = d.querySelector("#record")
+    var playstate = d.querySelector("#playstate")
+    var timePlayed = d.querySelector('#timeplayed')
+    var timeRemaining = d.querySelector('#timeremaining')
+
+    /* Updates the time displays in the overlay according to audio.currentTime */
+    var updateTime = function() {
+        var floor = Math.floor
+
+        var totalPlayedSecs = floor(audio.currentTime)
+        var totalRemainingSecs = floor(audio.duration - audio.currentTime)
+
+        var playedMins = floor(totalPlayedSecs / 60)
+        var playedSecs = floor(totalPlayedSecs % 60)
+
+        var remainingMins = floor(totalRemainingSecs / 60)
+        var remainingSecs = floor(totalRemainingSecs % 60)
+
+        if(audio.currentTime) {
+            timePlayed.innerHTML = playedMins.toString().padStart(2, "0") + ":" + playedSecs.toString().padStart(2, "0")
+        }
+
+        if(audio.duration) {
+            timeRemaining.innerHTML = "-" + remainingMins.toString().padStart(2, "0") + ":" + remainingSecs.toString().padStart(2, "0")
+        }
+    }
+    
+    // Initialize all the displays
+    updateTime()
+
+
+    audio.addEventListener('play', function() {
+        record.classList.add('playing')
+        playstate.innerHTML = "⏸"
+
+    })
+
+    audio.addEventListener('pause', function() {
+        record.classList.remove('playing')
+        playstate.innerHTML = "▶️"
+    })
+
+    audio.addEventListener('timeupdate', updateTime)
+    
+    record.addEventListener('click', function() {
+        if(audio.paused) {
+            audio.play()
+        } else {
+            audio.pause()
+        }
+    })
+});
+</script>
+
+</head>
+<body>
+    <div id="content">
+        <div id="record">
+            <img id="cover"/>
+            <div class="overlay">
+                <div>
+                    <h1 id="title"></h1>
+                    <h2 id="album"></h2>
+                    <h3 id="artist"></h3>
+                </div>
+
+                <div class="playbar">
+                    <div id="timeplayed"></div>
+                    <div id="timeremaining"></div>
+                </div>
+            </div>
+            <div class="overlay play">
+                <h1 id="playstate">▶️</h1>
+            </div>
+            <audio preload="auto">
+                <source id="source">
+                Your browser does not support the audio element.
+            </audio>
+        </div>
+    </div>
+</body>
+</html>

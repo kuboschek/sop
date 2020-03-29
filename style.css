@@ -1,0 +1,84 @@
+html, body, #content {
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    background: linear-gradient(113deg, hsla(297, 20%, 18%, 1), hsla(241, 44%, 13%, 1));
+    color: #e4e1e5;
+    font-family: sans-serif;
+}
+
+#content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#record:hover {
+    box-shadow: 4px 4px 11px 1px #0000009e;
+}
+
+#record {
+    display: grid;
+    box-shadow: 2px 2px 11px 1px #0000009e;
+    width: 100vw;
+    max-width: 500px;
+    transition: box-shadow 0.6s ease;
+}
+
+div.overlay {
+    transition: opacity 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+#record.playing div.overlay {
+    opacity: 0;
+}
+
+div.overlay > div {
+    width: calc(100% - 2 * 1em);
+    padding: 1em;
+}
+
+#record:hover div.overlay {
+    opacity: 1;
+}
+
+#record img, div.overlay {
+    grid-column: 1;
+    grid-row: 1;
+    width: 100%;
+}
+
+#record > div.overlay:first-of-type {
+    background: #0000008a;
+}
+
+div.play {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 10;
+}
+
+#record h1, h2, h3 {
+    justify-self: flex-start;
+    align-self: center;
+    margin-bottom: 0;
+    margin-top: 0;
+}
+
+audio {
+    display: none;
+}
+
+.playbar {
+    display: flex;
+    justify-content: space-between;
+}
+
+#playstate {
+    font-size: 60px;
+}
