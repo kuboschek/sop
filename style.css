@@ -1,10 +1,27 @@
 html, body, #content {
     margin: 0;
     padding: 0;
-    height: 100vh;
     background: linear-gradient(113deg, hsla(297, 20%, 18%, 1), hsla(241, 44%, 13%, 1));
     color: #e4e1e5;
     font-family: sans-serif;
+    height: 100vh;
+}
+
+footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    padding: 1em 0;
+    display: flex;
+    justify-content: center;
+}
+
+footer a {
+    text-decoration: none;
+    color: #958a99;
+    font-size: 0.8rem;
+    margin: 0 1em;
 }
 
 #content {
@@ -13,16 +30,27 @@ html, body, #content {
     justify-content: center;
 }
 
-#record:hover {
+@media only screen and (max-width: 600px) {
+    #content {
+        flex-direction: column;
+    }
+}
+
+.record:hover {
     box-shadow: 4px 4px 11px 1px #0000009e;
 }
 
-#record {
+.record {
     display: grid;
     box-shadow: 2px 2px 11px 1px #0000009e;
     width: 100vw;
+    max-width: 450px;
+    transition: box-shadow, max-width 0.6s ease;
+    margin: 0 1em;
+}
+
+.record.active, .record:hover {
     max-width: 500px;
-    transition: box-shadow 0.6s ease;
 }
 
 div.overlay {
@@ -32,7 +60,7 @@ div.overlay {
     justify-content: space-between;
 }
 
-#record.playing div.overlay {
+.record.active.playing div.overlay, .record div.overlay {
     opacity: 0;
 }
 
@@ -41,21 +69,25 @@ div.overlay > div {
     padding: 1em;
 }
 
-#record:hover div.overlay {
+.record.active div.overlay {
     opacity: 1;
 }
 
-#record img, div.overlay {
+.record:hover div.overlay, .record.active:hover div.overlay {
+    opacity: 1;
+}
+
+.record img, div.overlay {
     grid-column: 1;
     grid-row: 1;
     width: 100%;
 }
 
-#record > div.overlay:first-of-type {
+.record > div.overlay:first-of-type {
     background: #0000008a;
 }
 
-div.play {
+.overlay.play {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -63,7 +95,7 @@ div.play {
     z-index: 10;
 }
 
-#record h1, h2, h3 {
+.record h1, h2, h3 {
     justify-self: flex-start;
     align-self: center;
     margin-bottom: 0;
@@ -79,6 +111,6 @@ audio {
     justify-content: space-between;
 }
 
-#playstate {
+.overlay.play .playstate {
     font-size: 60px;
 }

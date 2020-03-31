@@ -13,16 +13,29 @@ To play your own song, change the data
 at the top of ```index.html```:
 
 ```js
-var songInfo = {
-    fileLocation: "<location of your .wav file>",
-    fileType: "audio/wav",
+var songInfo = [{
+        id: "miles-away",
+        fileLocation: "fl/masters/280320.wav",
+        fileType: "audio/wav",
 
-    coverLocation: "<location of SQUARE cover picture>",
+        coverLocation: "covers/miles-away.jpg",
 
-    title: "<song title>",
-    album: "<album title>",
-    artist:"<artist name>"
-}
+        title: "Miles Away",
+        album: "f**k i think i made another rap track",
+        artist:"kubs"
+    },
+    {
+        id: "suicide-by-train",
+        fileLocation: "fl/masters/290320.flac",
+        fileType: "audio/flac",
+
+        coverLocation: "covers/suicide-by-train.jpg",
+
+        title: "Suicide By Train",
+        album: "f**k i think i made another rap track",
+        artist:"kubs"
+    }
+];
 ```
 
 ## Deploy

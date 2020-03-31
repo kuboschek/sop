@@ -3,71 +3,85 @@
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta http-equiv="content-type" content="text/html; charset=utf-8">
-<title>Miles Away - kubs</title>
+<title>kubs</title>
 <link rel="stylesheet" href="style.css" />
 
 <script type="text/javascript">
 
-var songInfo = {
-    fileLocation: "fl/masters/280320.wav",
-    fileType: "audio/wav",
+var songInfo = [{
+        id: "miles-away",
+        fileLocation: "fl/masters/280320.wav",
+        fileType: "audio/wav",
 
-    coverLocation: "covers/miles-away.jpg",
+        coverLocation: "covers/miles-away.jpg",
 
-    title: "Miles Away",
-    album: "f**k i think i made another rap track",
-    artist:"kubs"
+        title: "Miles Away",
+        album: "f**k i think i made another rap track",
+        artist:"kubs"
+    },
+    {
+        id: "suicide-by-train",
+        fileLocation: "fl/masters/290320.flac",
+        fileType: "audio/flac",
+
+        coverLocation: "covers/suicide-by-train.jpg",
+
+        title: "Suicide By Train",
+        album: "f**k i think i made another rap track",
+        artist:"kubs"
+    }
+]
+
+var setContent = function(elem, query, text) {
+    elem.querySelector(query).innerHTML = text
 }
 
-var d = document
-
-var setContent = function(query, text) {
-    d.querySelector(query).innerHTML = text
-}
-
-d.addEventListener('DOMContentLoaded', function() {
-    setContent("#title", songInfo.title)
-    setContent("#album", songInfo.album)
-    setContent("#artist", songInfo.artist)
+var setSongInfo = function(elem, songInfo) {
+    setContent(elem, ".title", songInfo.title)
+    setContent(elem, ".album", songInfo.album)
+    setContent(elem, ".artist", songInfo.artist)
     
-    var source = d.querySelector("#source")
+    var source = elem.querySelector("source")
     source.src = songInfo.fileLocation
     source.type = songInfo.fileType
 
-    var cover = d.querySelector("#cover")
+    var cover = elem.querySelector("img.cover")
     cover.src = songInfo.coverLocation
 
-    var audio = d.querySelector("audio")
-    var record = d.querySelector("#record")
-    var playstate = d.querySelector("#playstate")
-    var timePlayed = d.querySelector('#timeplayed')
-    var timeRemaining = d.querySelector('#timeremaining')
+    var audio = elem.querySelector("audio")
+    var record = elem
+    var playstate = elem.querySelector(".playstate")
+    var timePlayed = elem.querySelector('.timeplayed')
+    var timeRemaining = elem.querySelector('.timeremaining')
 
     /* Updates the time displays in the overlay according to audio.currentTime */
-    var updateTime = function() {
-        var floor = Math.floor
+    var updateTime = function(audio, timePlayed, timeRemaining) {
+        return function() {
+            var floor = Math.floor
 
-        var totalPlayedSecs = floor(audio.currentTime)
-        var totalRemainingSecs = floor(audio.duration - audio.currentTime)
+            var totalPlayedSecs = floor(audio.currentTime)
+            var totalRemainingSecs = floor(audio.duration - audio.currentTime)
 
-        var playedMins = floor(totalPlayedSecs / 60)
-        var playedSecs = floor(totalPlayedSecs % 60)
+            var playedMins = floor(totalPlayedSecs / 60)
+            var playedSecs = floor(totalPlayedSecs % 60)
 
-        var remainingMins = floor(totalRemainingSecs / 60)
-        var remainingSecs = floor(totalRemainingSecs % 60)
+            var remainingMins = floor(totalRemainingSecs / 60)
+            var remainingSecs = floor(totalRemainingSecs % 60)
 
-        if(audio.currentTime) {
-            timePlayed.innerHTML = playedMins.toString().padStart(2, "0") + ":" + playedSecs.toString().padStart(2, "0")
-        }
+            if(audio.currentTime) {
+                timePlayed.innerHTML = playedMins.toString().padStart(2, "0") + ":" + playedSecs.toString().padStart(2, "0")
+            }
 
-        if(audio.duration) {
-            timeRemaining.innerHTML = "-" + remainingMins.toString().padStart(2, "0") + ":" + remainingSecs.toString().padStart(2, "0")
+            if(audio.duration) {
+                timeRemaining.innerHTML = "-" + remainingMins.toString().padStart(2, "0") + ":" + remainingSecs.toString().padStart(2, "0")
+            }
         }
     }
     
     // Initialize all the displays
-    updateTime()
+    var updateTimeFn = updateTime(audio, timePlayed, timeRemaining)
 
+    updateTimeFn()
 
     audio.addEventListener('play', function() {
         record.classList.add('playing')
@@ -80,13 +94,65 @@ d.addEventListener('DOMContentLoaded', function() {
         playstate.innerHTML = "▶️"
     })
 
-    audio.addEventListener('timeupdate', updateTime)
+    audio.addEventListener('timeupdate', updateTimeFn)
     
     record.addEventListener('click', function() {
+        // Pause all other tracks
+        document.querySelectorAll('.record').forEach(function(elem) {
+            if(elem != record) {
+                elem.querySelector('audio').pause()
+                elem.classList.remove('active')
+            }
+        })
+
+        record.classList.add('active')
+
         if(audio.paused) {
             audio.play()
         } else {
             audio.pause()
+        }
+    })
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    content = document.querySelector('#content')
+    songInfo.forEach(function(songData) {
+        div = document.createElement('div')
+        div.classList.add('record')
+        div.dataset.id = songData.id
+
+        div.innerHTML = "\
+        <img class='cover'/>\
+            <div class='overlay'>\
+                <div>\
+                    <h1 class='title'></h1>\
+                    <h2 class='album'></h2>\
+                    <h3 class='artist'></h3>\
+                </div>\
+\
+                <div class='playbar'>\
+                    <div class='timeplayed'></div>\
+                    <div class='timeremaining'></div>\
+                </div>\
+            </div>\
+            <div class='overlay play'>\
+                <h1 class='playstate'>▶️</h1>\
+            </div>\
+            <audio>\
+                <source src='" + songData.fileLocation + "' type='" + songData.fileType +"'>\
+                Your browser does not support the audio element.\
+            </audio>"
+
+        div.style = "display: none";
+        img = div.querySelector('img')
+
+        setSongInfo(div, songData);
+        content.appendChild(div);
+
+        
+        img.onload = function(evt) {
+            evt.target.parentElement.style = "";
         }
     })
 });
@@ -95,28 +161,9 @@ d.addEventListener('DOMContentLoaded', function() {
 </head>
 <body>
     <div id="content">
-        <div id="record">
-            <img id="cover"/>
-            <div class="overlay">
-                <div>
-                    <h1 id="title"></h1>
-                    <h2 id="album"></h2>
-                    <h3 id="artist"></h3>
-                </div>
-
-                <div class="playbar">
-                    <div id="timeplayed"></div>
-                    <div id="timeremaining"></div>
-                </div>
-            </div>
-            <div class="overlay play">
-                <h1 id="playstate">▶️</h1>
-            </div>
-            <audio preload="auto">
-                <source id="source">
-                Your browser does not support the audio element.
-            </audio>
-        </div>
     </div>
+    <footer>
+        <a href="https://github.com/kuboschek/sop">sop - the simple song page</a>
+    </footer>
 </body>
 </html>
